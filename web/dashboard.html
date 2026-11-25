@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLACEMENT | Campus Management Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i data-lucide="graduation-cap" class="brand-icon"></i>
+        <div class="brand-info">
+          <h2>PLACEMENT</h2>
+          <span id="userRoleBadge" class="badge">Role</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebarNav">
+        <!-- Dynamically injected links based on role -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <i data-lucide="user-circle" class="avatar-icon"></i>
+          <div class="user-meta">
+            <strong id="headerUserName">User</strong>
+            <small id="headerUserSub">Signed in</small>
+          </div>
+        </div>
+        <button id="logoutBtn" class="btn btn-ghost btn-sm" title="Logout">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="top-actions">
+          <span class="system-time" id="systemClock">--:--</span>
+          <button class="btn btn-secondary btn-sm" onclick="location.reload()">
+            <i data-lucide="refresh-cw"></i> Refresh
+          </button>
+        </div>
+      </header>
+
+      <div class="content-body" id="contentArea">
+        <!-- Dynamic views will render here -->
+      </div>
+    </main>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

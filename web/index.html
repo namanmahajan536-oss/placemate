@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLACEMENT – Smart Campus Placement Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      --primary-light: #2563eb;
+      --primary-dark: #0f172a;
+      --accent: #4f46e5;
+      --accent-light: #6366f1;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Top Navigation */
+    .top-nav {
+      background: #1e3a5f; color: #fff; padding: 0.85rem 2rem; display: flex;
+      justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.25rem; letter-spacing: 0.5px; }
+    .brand i { width: 28px; height: 28px; color: #60a5fa; }
+    .nav-tag { background: rgba(255,255,255,0.15); font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+
+    /* Main Container */
+    .container { max-width: 1080px; margin: 2rem auto; padding: 0 1.5rem; width: 100%; flex: 1; }
+
+    /* Demo Hint Banner */
+    .hint-banner {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1.25rem;
+      margin-bottom: 2rem; box-shadow: var(--shadow);
+    }
+    .hint-title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem; font-size: 0.95rem; }
+    .hint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.85rem; }
+    .hint-card {
+      background: #ffffff; border: 1px solid #dbeafe; border-radius: var(--radius); padding: 0.75rem 1rem;
+      display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
+    }
+    .hint-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(59,130,246,0.1); }
+    .hint-role { font-weight: 600; font-size: 0.9rem; color: #1e3a5f; }
+    .hint-cred { font-size: 0.8rem; color: #64748b; font-family: monospace; margin-top: 2px; }
+    .btn-fill {
+      background: #3b82f6; color: #fff; border: none; padding: 0.4rem 0.75rem; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: background 0.15s;
+    }
+    .btn-fill:hover { background: #1d4ed8; }
+
+    /* Auth Box */
+    .auth-wrapper {
+      max-width: 480px; margin: 0 auto; background: var(--card); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .auth-tabs { display: flex; border-bottom: 1px solid var(--border); background: #f8fafc; }
+    .tab-btn {
+      flex: 1; padding: 1rem; text-align: center; border: none; background: transparent; font-weight: 600;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+    }
+    .tab-btn.active { background: #ffffff; color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+    .auth-form { padding: 2rem; display: none; }
+    .auth-form.active { display: block; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem; }
+    .form-control {
+      width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: var(--radius);
+      font-size: 0.95rem; outline: none; transition: border-color 0.15s;
+    }
+    .form-control:focus { border-color: var(--accent); ring: 2px solid #c7d2fe; }
+
+    .btn-submit {
+      width: 100%; background: #1e3a5f; color: #fff; padding: 0.85rem; border: none; border-radius: var(--radius);
+      font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+    }
+    .btn-submit:hover { background: #0f172a; }
+
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; padding: 0.85rem 1.25rem; border-radius: 8px;
+      color: #fff; font-weight: 500; font-size: 0.9rem; z-index: 1000; box-shadow: var(--shadow-lg);
+      transition: opacity 0.3s;
+    }
+    .toast-success { background: #10b981; }
+    .toast-error { background: #ef4444; }
+
+    footer { text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="brand">
+      <i data-lucide="graduation-cap"></i>
+      <span>PLACEMENT</span>
+      <span class="nav-tag">Smart Campus Portal</span>
+    </div>
+    <div style="font-size:0.85rem;color:#cbd5e1">
+      Terminal &amp; Web Sync Engine
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1-Click Fill Demo Credentials Hint Box -->
+    <div class="hint-banner">
+      <div class="hint-title">
+        <i data-lucide="sparkles" style="width:18px;height:18px"></i>
+        <span>Quick Demo Credentials &amp; 1-Click Fill Hints (From Terminal Database)</span>
+      </div>
+      <div class="hint-grid">
+        <div class="hint-card">
+          <div>
+            <div class="hint-role">TPO / Admin Dashboard</div>
+            <div class="hint-cred">User: <b>admin</b> | Pass: <b>admin123</b></div>
+          </div>
+          <button class="btn-fill" onclick="fillCreds('admin', 'admin123', 'ADMIN')">1-Click Fill</button>
+        </div>
+
+        <div class="hint-card">
+          <div>
+            <div class="hint-role">Student 1 (Rahul Sharma - Placed)</div>
+            <div class="hint-cred">User: <b>student1</b> | Pass: <b>pass123</b></div>
+          </div>
+          <button class="btn-fill" onclick="fillCreds('student1', 'pass123', 'STUDENT')">1-Click Fill</button>
+        </div>
+
+        <div class="hint-card">
+          <div>
+            <div class="hint-role">Student 2 (Priya Patel - Eligible)</div>
+            <div class="hint-cred">User: <b>student2</b> | Pass: <b>pass123</b></div>
+          </div>
+          <button class="btn-fill" onclick="fillCreds('student2', 'pass123', 'STUDENT')">1-Click Fill</button>
+        </div>
+
+        <div class="hint-card">
+          <div>
+            <div class="hint-role">Recruiter (TechCorp Solutions)</div>
+            <div class="hint-cred">User: <b>recruiter1</b> | Pass: <b>pass123</b></div>
+          </div>
+          <button class="btn-fill" onclick="fillCreds('recruiter1', 'pass123', 'RECRUITER')">1-Click Fill</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth Box -->
+    <div class="auth-wrapper">
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">New Student Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Select Role</label>
+          <select id="loginRole" class="form-control">
+            <option value="STUDENT">Student</option>
+            <option value="ADMIN">TPO / Admin</option>
+            <option value="RECRUITER">Company Recruiter</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="loginUsername" class="form-control" placeholder="e.g. admin or student1" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn-submit">Sign In to Dashboard</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="e.g. Aryan Verma" required>
+        </div>
+        <div class="form-group">
+          <label>Desired Username</label>
+          <input type="text" id="regUsername" class="form-control" placeholder="e.g. aryan25" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="regPassword" class="form-control" placeholder="Password" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="aryan@campus.edu" required>
+        </div>
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="regRoll" class="form-control" placeholder="e.g. CS2025099" required>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+          <div class="form-group">
+            <label>Branch</label>
+            <select id="regBranch" class="form-control">
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="IT">IT</option>
+              <option value="ME">ME</option>
+              <option value="CE">CE</option>
+              <option value="EE">EE</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Current CGPA</label>
+            <input type="number" step="0.01" min="0" max="10" id="regCgpa" class="form-control" placeholder="8.50" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" style="background:#4f46e5">Complete Registration</button>
+      </form>
+    </div>
+
+  </main>
+
+  <footer>
+    PLACEMENT Management System &bull; Java Backend + REST API + Modern Web + Terminal Engine &bull; Port 8080
+  </footer>
+
+  <div id="toastContainer"></div>
+
+  <script>
+    lucide.createIcons();
+
+    function fillCreds(u, p, r) {
+      switchTab('login');
+      document.getElementById('loginUsername').value = u;
+      document.getElementById('loginPassword').value = p;
+      document.getElementById('loginRole').value = r;
+      showToast('Filled credentials for ' + r + ' (' + u + ')', 'success');
+    }
+
+    function switchTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('tabLogin').classList.add('active');
+        document.getElementById('tabRegister').classList.remove('active');
+        document.getElementById('loginForm').classList.add('active');
+        document.getElementById('registerForm').classList.remove('active');
+      } else {
+        document.getElementById('tabRegister').classList.add('active');
+        document.getElementById('tabLogin').classList.remove('active');
+        document.getElementById('registerForm').classList.add('active');
+        document.getElementById('loginForm').classList.remove('active');
+      }
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerText = msg;
+      container.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const role = document.getElementById('loginRole').value;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, role })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          sessionStorage.setItem('placement_user', JSON.stringify(data));
+          showToast('Login successful! Welcome ' + data.name, 'success');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
+        } else {
+          showToast(data.error || 'Invalid credentials.', 'error');
+        }
+      } catch (err) {
+        showToast('Error connecting to backend server on port 8080.', 'error');
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const email = document.getElementById('regEmail').value.trim();
+      const rollNumber = document.getElementById('regRoll').value.trim();
+      const branch = document.getElementById('regBranch').value;
+      const cgpa = document.getElementById('regCgpa').value;
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, username, password, email, rollNumber, branch, cgpa, graduationYear: 2025 })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast('Registration successful! You can now sign in.', 'success');
+          fillCreds(username, password, 'STUDENT');
+        } else {
+          showToast(data.error || 'Registration failed.', 'error');
+        }
+      } catch (err) {
+        showToast('Error registering with backend.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

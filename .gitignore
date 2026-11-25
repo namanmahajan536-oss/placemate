@@ -1,0 +1,7 @@
+out/
+*.class
+err.log
+out.log
+sources.txt
+.DS_Store
+Thumbs.db
