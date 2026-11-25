@@ -78,8 +78,9 @@ public class StudentService {
     }
 
     public List<Student> getTopStudentsByCGPA(int n) {
+        if (n <= 0) return new ArrayList<>();
         List<Student> sorted = studentManager.sortByCGPA();
-        return sorted.subList(0, Math.min(n, sorted.size()));
+        return new ArrayList<>(sorted.subList(0, Math.min(n, sorted.size())));
     }
 
     public int getStudentCount() { return studentManager.getStudentCount(); }

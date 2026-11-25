@@ -53,7 +53,10 @@ public class StudentManager {
     /** Linear search by name, roll number, or branch */
     public List<Student> searchStudents(String query) {
         List<Student> results = new ArrayList<>();
-        String q = query.toLowerCase();
+        if (query == null || query.trim().isEmpty()) {
+            return results;
+        }
+        String q = query.trim().toLowerCase();
         for (Student s : students) {
             if ((s.getName() != null && s.getName().toLowerCase().contains(q)) ||
                 (s.getRollNumber() != null && s.getRollNumber().toLowerCase().contains(q)) ||

@@ -43,6 +43,10 @@ public class InterviewManager {
         if (i != null) i.setStatus(Interview.InterviewStatus.CANCELLED);
     }
 
+    public synchronized void removeInterview(String id) {
+        interviews.removeIf(i -> i.getId().equals(id));
+    }
+
     public List<Interview> getAllInterviews() { return new ArrayList<>(interviews); }
 
     public synchronized void setInterviews(List<Interview> list) { interviews.clear(); interviews.addAll(list); }

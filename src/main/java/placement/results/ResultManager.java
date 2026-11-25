@@ -39,6 +39,10 @@ public class ResultManager {
         return list;
     }
 
+    public synchronized void removeResult(String id) {
+        results.removeIf(r -> r.getId().equals(id));
+    }
+
     public List<PlacementResult> getAllResults() { return new ArrayList<>(results); }
 
     public synchronized void updateResult(String id, PlacementResult.ResultStatus status) {

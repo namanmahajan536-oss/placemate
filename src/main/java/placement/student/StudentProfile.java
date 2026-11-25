@@ -51,4 +51,18 @@ public class StudentProfile {
                 student.getBranch(), student.getCgpa(), student.getGraduationYear(),
                 student.getActiveBacklogs(), student.getHistoricalBacklogs());
     }
+
+    public String isEligibleOverview() {
+        if (student.isPlaced()) {
+            return "Already placed at " + student.getPlacedCompany()
+                    + " (" + String.format("%.2f", student.getPackageOffered()) + " LPA)";
+        }
+        if (student.getActiveBacklogs() > 0) {
+            return "Restricted: " + student.getActiveBacklogs() + " active backlog(s)";
+        }
+        if (student.getCgpa() < 6.0) {
+            return "Needs improvement: CGPA below general 6.0 cutoff";
+        }
+        return "Eligible for standard campus placement drives";
+    }
 }

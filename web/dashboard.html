@@ -3,61 +3,434 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PLACEMENT | Campus Management Portal</title>
+  <title>PlacementPro – Enterprise Placement Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons & Chart.js for executive analytics -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <i data-lucide="graduation-cap" class="brand-icon"></i>
-        <div class="brand-info">
-          <h2>PLACEMENT</h2>
-          <span id="userRoleBadge" class="badge">Role</span>
+
+  <div class="app-wrapper">
+
+    <!-- ====================================================================
+         LEFT SIDEBAR
+         ==================================================================== -->
+    <aside class="app-sidebar" id="appSidebar">
+      <!-- Brand Header -->
+      <div class="sidebar-brand">
+        <a href="#" class="brand-link" onclick="navigateSection('overview')">
+          <div class="brand-logo-icon">
+            <i data-lucide="graduation-cap"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">PlacementPro</span>
+            <span class="brand-tagline">Careers &bull; Futures</span>
+          </div>
+        </a>
+        <button type="button" class="sidebar-collapse-btn" id="sidebarToggleBtn" title="Toggle Sidebar" onclick="toggleSidebar()">
+          <i data-lucide="panel-left-close"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="sidebar-scrollable">
+        <!-- Main Navigation Group -->
+        <div class="nav-group">
+          <div class="nav-group-title">Main Portal</div>
+          <ul class="nav-list" id="sidebarNavList">
+            <!-- Dynamically injected based on role -->
+          </ul>
         </div>
       </div>
 
-      <nav class="sidebar-nav" id="sidebarNav">
-        <!-- Dynamically injected links based on role -->
-      </nav>
-
+      <!-- User Profile Widget at Bottom -->
       <div class="sidebar-footer">
-        <div class="user-profile">
-          <i data-lucide="user-circle" class="avatar-icon"></i>
-          <div class="user-meta">
-            <strong id="headerUserName">User</strong>
-            <small id="headerUserSub">Signed in</small>
+        <div class="user-card-widget">
+          <div class="user-avatar-circle" id="sidebarAvatar">U</div>
+          <div class="user-meta-info">
+            <div class="user-meta-name" id="sidebarUserName">User</div>
+            <div class="user-meta-role">
+              <span class="badge-dot" style="background:#10B981;"></span>
+              <span id="sidebarUserRole">STUDENT</span>
+            </div>
           </div>
+          <button type="button" class="user-logout-icon-btn" title="Sign Out" onclick="handleSignOut()">
+            <i data-lucide="log-out" style="width:18px;height:18px;"></i>
+          </button>
         </div>
-        <button id="logoutBtn" class="btn btn-ghost btn-sm" title="Logout">
-          <i data-lucide="log-out"></i>
-        </button>
       </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-      <header class="top-bar">
-        <h1 id="pageTitle">Dashboard</h1>
-        <div class="top-actions">
-          <span class="system-time" id="systemClock">--:--</span>
-          <button class="btn btn-secondary btn-sm" onclick="location.reload()">
-            <i data-lucide="refresh-cw"></i> Refresh
+    <!-- ====================================================================
+         MAIN CONTENT AREA
+         ==================================================================== -->
+    <div class="app-main">
+
+      <!-- Top Navigation Bar -->
+      <header class="app-topbar">
+        <!-- Left: Breadcrumb & Academic Status -->
+        <div class="topbar-left">
+          <nav class="breadcrumbs">
+            <a href="#" onclick="navigateSection('overview')">PlacementPro</a>
+            <span>/</span>
+            <span class="current" id="breadcrumbCurrent">Overview</span>
+          </nav>
+          <div class="academic-session-pill">
+            <span class="pulse-dot"></span>
+            <span>2024–2025 Placement Cycle &bull; Active</span>
+          </div>
+        </div>
+
+        <!-- Right: Search, Notifications & Quick Actions -->
+        <div class="topbar-right">
+          <!-- Global Search -->
+          <div class="global-search-box">
+            <i data-lucide="search" class="global-search-icon"></i>
+            <input type="text" class="global-search-input" id="globalSearchInput" placeholder="Quick search candidates, companies, drives..." onkeyup="handleGlobalSearch(event)">
+            <span class="search-shortcut-hint">Ctrl K</span>
+          </div>
+
+          <!-- Notification Bell -->
+          <button type="button" class="topbar-icon-btn" title="Announcements & Alerts" onclick="navigateSection('notifications')">
+            <i data-lucide="bell" style="width:19px;height:19px;"></i>
+            <span class="notif-badge-indicator" id="notifBadge"></span>
           </button>
+
+          <!-- Quick Action Dropdown -->
+          <div style="position:relative;">
+            <button type="button" class="quick-action-primary-btn" onclick="toggleQuickActionMenu()">
+              <i data-lucide="plus" style="width:17px;height:17px;"></i>
+              <span id="quickActionBtnLabel">Quick Action</span>
+              <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
+            </button>
+            <div id="quickActionDropdown" style="display:none;position:absolute;right:0;top:115%;width:220px;background:#fff;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 12px 24px rgba(0,0,0,0.12);padding:0.5rem;z-index:200;">
+              <!-- Role specific actions -->
+            </div>
+          </div>
         </div>
       </header>
 
-      <div class="content-body" id="contentArea">
-        <!-- Dynamic views will render here -->
-      </div>
-    </main>
+      <!-- Scrollable Main View Container -->
+      <main class="app-content-scrollable">
+        <div class="page-container" id="pageContainer">
+          <!-- Content views dynamically loaded via app.js -->
+        </div>
+      </main>
+    </div>
+
   </div>
 
+  <!-- ====================================================================
+       REUSABLE MODAL DIALOGS
+       ==================================================================== -->
+
+  <!-- Modal: Add / Edit Student -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text" id="studentModalTitle">Add New Student Candidate</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('studentModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveStudent(event)">
+        <div class="modal-body-area">
+          <input type="hidden" id="modalStudentId">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="modalStudentName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Roll Number</label>
+              <input type="text" id="modalStudentRoll" class="form-input" placeholder="CS2025001" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Branch / Department</label>
+              <select id="modalStudentBranch" class="form-select">
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="IT">IT</option>
+                <option value="ME">ME</option>
+                <option value="CE">CE</option>
+                <option value="EE">EE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" id="modalStudentCgpa" class="form-input" placeholder="8.50" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Active Backlogs</label>
+              <input type="number" min="0" id="modalStudentBacklogs" class="form-input" value="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Campus Email</label>
+              <input type="email" id="modalStudentEmail" class="form-input" placeholder="rahul@campus.edu" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('studentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add / Edit Company -->
+  <div class="modal-overlay" id="companyModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text" id="companyModalTitle">Register Hiring Partner</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('companyModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveCompany(event)">
+        <div class="modal-body-area">
+          <input type="hidden" id="modalCompanyId">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" id="modalCompanyName" class="form-input" placeholder="e.g. Microsoft India" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Industry Category</label>
+              <input type="text" id="modalCompanyIndustry" class="form-input" placeholder="Cloud & AI Enterprise" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Location</label>
+              <input type="text" id="modalCompanyLocation" class="form-input" placeholder="Bangalore / Hyderabad" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Minimum CGPA</label>
+              <input type="number" step="0.1" min="0" max="10" id="modalCompanyCgpa" class="form-input" value="7.0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Allowed Departments</label>
+              <input type="text" id="modalCompanyBranches" class="form-input" placeholder="CSE,ECE,IT" value="CSE,ECE,IT">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website URL</label>
+              <input type="url" id="modalCompanyWebsite" class="form-input" placeholder="https://company.com">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Company Description &amp; Overview</label>
+              <textarea id="modalCompanyDesc" class="form-textarea" placeholder="Leading technology firm hiring software engineers..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('companyModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Company Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create Placement Drive -->
+  <div class="modal-overlay" id="driveModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text">Launch Campus Placement Drive</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('driveModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveDrive(event)">
+        <div class="modal-body-area">
+          <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Partner Company</label>
+              <select id="modalDriveCompanySelect" class="form-select" required>
+                <!-- Injected via app.js -->
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Drive Title &amp; Role</label>
+              <input type="text" id="modalDriveTitle" class="form-input" placeholder="Graduate Platform Engineer Drive 2025" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Drive Date</label>
+              <input type="date" id="modalDriveDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Application Deadline</label>
+              <input type="date" id="modalDriveDeadline" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Minimum CGPA</label>
+              <input type="number" step="0.1" min="0" max="10" id="modalDriveMinCgpa" class="form-input" value="7.5" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Active Backlogs</label>
+              <input type="number" min="0" id="modalDriveBacklogs" class="form-input" value="0" required>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Eligible Departments (comma-separated)</label>
+              <input type="text" id="modalDriveBranches" class="form-input" value="CSE,ECE,IT" required>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Job Description &amp; Requirements</label>
+              <textarea id="modalDriveDesc" class="form-textarea" placeholder="Key responsibilities: Java development, cloud services, and algorithmic problem solving..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('driveModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish Placement Drive</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Schedule Interview -->
+  <div class="modal-overlay" id="interviewModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text">Schedule Candidate Interview</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('interviewModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveInterview(event)">
+        <div class="modal-body-area">
+          <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Candidate Application</label>
+              <select id="modalIntApplication" class="form-select" required>
+                <!-- Injected via app.js -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Interview Round</label>
+              <select id="modalIntRound" class="form-select">
+                <option value="TECHNICAL_ROUND_1">Technical Round 1</option>
+                <option value="TECHNICAL_ROUND_2">Technical Round 2</option>
+                <option value="CODING_TEST">Online Coding Assessment</option>
+                <option value="HR_ROUND">HR &amp; Cultural Fit Round</option>
+                <option value="APTITUDE_TEST">General Aptitude Test</option>
+                <option value="GROUP_DISCUSSION">Group Discussion Round</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Interview Date</label>
+              <input type="date" id="modalIntDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Scheduled Time</label>
+              <input type="text" id="modalIntTime" class="form-input" placeholder="10:30 AM" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Venue / Meeting URL</label>
+              <input type="text" id="modalIntVenue" class="form-input" placeholder="Campus Placement Lab 3 or Google Meet Link" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('interviewModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm &amp; Schedule Slot</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Record Final Offer -->
+  <div class="modal-overlay" id="offerModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text">Record Placement Offer &amp; Package</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('offerModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveOffer(event)">
+        <div class="modal-body-area">
+          <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Select Placed Student</label>
+              <select id="modalOfferStudent" class="form-select" required>
+                <!-- Injected via app.js -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hiring Company</label>
+              <input type="text" id="modalOfferCompany" class="form-input" placeholder="e.g. Google India" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Designation / Role</label>
+              <input type="text" id="modalOfferRole" class="form-input" placeholder="Software Development Engineer" required>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Offered Package (LPA - Lakhs Per Annum)</label>
+              <input type="number" step="0.1" min="1" max="150" id="modalOfferPackage" class="form-input" placeholder="18.5" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('offerModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Award &amp; Mark Student Placed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Broadcast Announcement -->
+  <div class="modal-overlay" id="broadcastModal">
+    <div class="modal-dialog-box">
+      <div class="modal-header-bar">
+        <div class="modal-title-text">Broadcast Campus Announcement</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('broadcastModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form onsubmit="handleSaveBroadcast(event)">
+        <div class="modal-body-area">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Target Audience</label>
+            <select id="modalBroadcastTarget" class="form-select">
+              <option value="ALL">All Registered Students</option>
+              <option value="CSE">CSE Department</option>
+              <option value="ECE">ECE Department</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Announcement Message</label>
+            <textarea id="modalBroadcastMsg" class="form-textarea" placeholder="Important announcement regarding tomorrow's campus drive..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer-bar">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('broadcastModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish to Noticeboard</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Slide-Over Drawer: Job Details & Live Eligibility Checker -->
+  <div class="modal-overlay" id="jobDetailModal">
+    <div class="modal-dialog-box" style="max-width:680px;">
+      <div class="modal-header-bar">
+        <div class="modal-title-text" id="detailJobTitle">Placement Opportunity</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal('jobDetailModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body-area" id="jobDetailBody">
+        <!-- Injected via app.js -->
+      </div>
+      <div class="modal-footer-bar" id="jobDetailFooter">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>
 
+  <!-- Main JavaScript Engine -->
   <script src="app.js"></script>
 </body>
 </html>

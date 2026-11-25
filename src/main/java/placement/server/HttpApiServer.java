@@ -56,10 +56,28 @@ public final class HttpApiServer {
 
     public HttpApiServer(int port) throws IOException {
         this.port = port;
-        this.webRoot = Paths.get("web").toAbsolutePath().normalize();
+        Path candidateWeb = Paths.get("web").toAbsolutePath().normalize();
+        if (!Files.exists(candidateWeb)) {
+            Path alt1 = Paths.get("PLACEMENT", "web").toAbsolutePath().normalize();
+            if (Files.exists(alt1)) candidateWeb = alt1;
+            else {
+                Path alt2 = Paths.get("..", "PLACEMENT", "web").toAbsolutePath().normalize();
+                if (Files.exists(alt2)) candidateWeb = alt2;
+            }
+        }
+        this.webRoot = candidateWeb;
 
         this.dataManager = DataManager.getInstance();
-        this.dataManager.setDataDir("data");
+        Path candidateData = Paths.get("data").toAbsolutePath().normalize();
+        if (!Files.exists(candidateData)) {
+            Path alt1 = Paths.get("PLACEMENT", "data").toAbsolutePath().normalize();
+            if (Files.exists(alt1)) candidateData = alt1;
+            else {
+                Path alt2 = Paths.get("..", "PLACEMENT", "data").toAbsolutePath().normalize();
+                if (Files.exists(alt2)) candidateData = alt2;
+            }
+        }
+        this.dataManager.setDataDir(candidateData.toString());
 
         this.studentManager = new StudentManager();
         this.studentService = new StudentService(studentManager);
@@ -209,6 +227,7 @@ public final class HttpApiServer {
         server.start();
         System.out.println("=============================================================");
         System.out.println(" PLACEMENT Web Server running at: http://localhost:" + port);
+        System.out.println(" Serving UI from: " + webRoot);
         System.out.println(" Dashboard Web UI: http://localhost:" + port + "/");
         System.out.println(" REST API Health : http://localhost:" + port + "/api/status");
         System.out.println("=============================================================");
@@ -228,10 +247,12 @@ public final class HttpApiServer {
             HttpApiServer s = new HttpApiServer(port);
             s.start();
             System.out.println("Press Ctrl+C to terminate.");
-            // Keep main thread alive so daemon server stays running
-            Object lock = new Object();
-            synchronized (lock) {
-                lock.wait();
+            while (true) {
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    break;
+                }
             }
         } catch (Exception e) {
             System.err.println("Failed to start server on port " + port + ": " + e.getMessage());
@@ -353,7 +374,8 @@ public final class HttpApiServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (handleCors(exchange)) return;
-            if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            String method = exchange.getRequestMethod();
+            if ("GET".equalsIgnoreCase(method)) {
                 String query = exchange.getRequestURI().getQuery();
                 Map<String, String> qMap = parseQuery(query);
                 if (qMap.containsKey("id")) {
@@ -364,13 +386,37 @@ public final class HttpApiServer {
                     for (Student s : studentManager.getAllStudents()) list.add(s.toMap());
                     sendJsonResponse(exchange, 200, toJson(list));
                 }
-            } else if ("PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
+            } else if ("POST".equalsIgnoreCase(method)) {
+                String body = readRequestBody(exchange);
+                Map<String, String> req = parseSimpleJson(body);
+                String id = "STU" + String.format("%03d", studentManager.getStudentCount() + 1);
+                Student s = new Student(id, req.getOrDefault("username", "student" + (studentManager.getStudentCount() + 1)),
+                        PasswordManager.hashPassword(req.getOrDefault("password", "pass123")),
+                        req.getOrDefault("email", ""), req.getOrDefault("rollNumber", ""), req.getOrDefault("name", ""),
+                        req.getOrDefault("branch", "CSE"),
+                        Double.parseDouble(req.getOrDefault("cgpa", "7.0")),
+                        Integer.parseInt(req.getOrDefault("graduationYear", "2025")));
+                studentManager.addStudent(s);
+                persistAll();
+                sendJsonResponse(exchange, 200, "{\"success\":true,\"id\":\"" + id + "\"}");
+            } else if ("PUT".equalsIgnoreCase(method)) {
                 String body = readRequestBody(exchange);
                 Map<String, String> req = parseSimpleJson(body);
                 String id = req.get("id");
                 studentService.updateProfile(id, req);
                 persistAll();
                 sendJsonResponse(exchange, 200, "{\"success\":true}");
+            } else if ("DELETE".equalsIgnoreCase(method)) {
+                String query = exchange.getRequestURI().getQuery();
+                Map<String, String> qMap = parseQuery(query);
+                String id = qMap.get("id");
+                if (id != null) {
+                    studentManager.removeStudent(id);
+                    persistAll();
+                    sendJsonResponse(exchange, 200, "{\"success\":true}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"Missing id parameter\"}");
+                }
             }
         }
     }
@@ -379,11 +425,12 @@ public final class HttpApiServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (handleCors(exchange)) return;
-            if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            String method = exchange.getRequestMethod();
+            if ("GET".equalsIgnoreCase(method)) {
                 List<Map<String, String>> list = new ArrayList<>();
                 for (Company c : companyManager.getAll()) list.add(c.toMap());
                 sendJsonResponse(exchange, 200, toJson(list));
-            } else if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            } else if ("POST".equalsIgnoreCase(method)) {
                 String body = readRequestBody(exchange);
                 Map<String, String> req = parseSimpleJson(body);
                 String id = "COMP" + String.format("%03d", companyManager.getCompanyCount() + 1);
@@ -394,9 +441,29 @@ public final class HttpApiServer {
                 }
                 c.setDescription(req.getOrDefault("description", ""));
                 c.setWebsite(req.getOrDefault("website", ""));
+                c.setContactEmail(req.getOrDefault("contactEmail", ""));
+                c.setContactPhone(req.getOrDefault("contactPhone", ""));
                 companyManager.addCompany(c);
                 persistAll();
                 sendJsonResponse(exchange, 200, "{\"success\":true,\"id\":\"" + id + "\"}");
+            } else if ("PUT".equalsIgnoreCase(method)) {
+                String body = readRequestBody(exchange);
+                Map<String, String> req = parseSimpleJson(body);
+                String id = req.get("id");
+                companyService.updateCompanyDetails(id, req);
+                persistAll();
+                sendJsonResponse(exchange, 200, "{\"success\":true}");
+            } else if ("DELETE".equalsIgnoreCase(method)) {
+                String query = exchange.getRequestURI().getQuery();
+                Map<String, String> qMap = parseQuery(query);
+                String id = qMap.get("id");
+                if (id != null) {
+                    companyManager.removeCompany(id);
+                    persistAll();
+                    sendJsonResponse(exchange, 200, "{\"success\":true}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"Missing id parameter\"}");
+                }
             }
         }
     }
@@ -405,11 +472,12 @@ public final class HttpApiServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (handleCors(exchange)) return;
-            if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            String method = exchange.getRequestMethod();
+            if ("GET".equalsIgnoreCase(method)) {
                 List<Map<String, String>> list = new ArrayList<>();
                 for (PlacementDrive d : driveManager.getAllDrives()) list.add(d.toMap());
                 sendJsonResponse(exchange, 200, toJson(list));
-            } else if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            } else if ("POST".equalsIgnoreCase(method)) {
                 String body = readRequestBody(exchange);
                 Map<String, String> req = parseSimpleJson(body);
                 String id = "DRV" + String.format("%03d", driveManager.getDriveCount() + 1);
@@ -432,6 +500,17 @@ public final class HttpApiServer {
                 notificationManager.addNotification("ALL", "New placement drive: " + d.getTitle() + " by " + d.getCompanyName());
                 persistAll();
                 sendJsonResponse(exchange, 200, "{\"success\":true,\"id\":\"" + id + "\"}");
+            } else if ("DELETE".equalsIgnoreCase(method)) {
+                String query = exchange.getRequestURI().getQuery();
+                Map<String, String> qMap = parseQuery(query);
+                String id = qMap.get("id");
+                if (id != null) {
+                    driveManager.removeDrive(id);
+                    persistAll();
+                    sendJsonResponse(exchange, 200, "{\"success\":true}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"Missing id parameter\"}");
+                }
             }
         }
     }
@@ -526,6 +605,17 @@ public final class HttpApiServer {
                 notificationManager.addNotification(i.getStudentId(), "New interview scheduled with " + i.getCompanyName() + " on " + i.getScheduledDate());
                 persistAll();
                 sendJsonResponse(exchange, 200, "{\"success\":true,\"id\":\"" + id + "\"}");
+            } else if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String query = exchange.getRequestURI().getQuery();
+                Map<String, String> qMap = parseQuery(query);
+                String id = qMap.get("id");
+                if (id != null) {
+                    interviewManager.removeInterview(id);
+                    persistAll();
+                    sendJsonResponse(exchange, 200, "{\"success\":true}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"Missing id parameter\"}");
+                }
             }
         }
     }
@@ -557,6 +647,17 @@ public final class HttpApiServer {
                 notificationManager.addNotification(r.getStudentId(), "Congratulations! Selected by " + r.getCompanyName() + " (" + r.getPackageLPA() + " LPA)!");
                 persistAll();
                 sendJsonResponse(exchange, 200, "{\"success\":true,\"id\":\"" + id + "\"}");
+            } else if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String query = exchange.getRequestURI().getQuery();
+                Map<String, String> qMap = parseQuery(query);
+                String id = qMap.get("id");
+                if (id != null) {
+                    resultManager.removeResult(id);
+                    persistAll();
+                    sendJsonResponse(exchange, 200, "{\"success\":true}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"error\":\"Missing id parameter\"}");
+                }
             }
         }
     }

@@ -52,6 +52,19 @@ public class PlacementDriveManager {
         if (d != null) d.setStatus(status);
     }
 
+    public synchronized void removeDrive(String id) {
+        drives.removeIf(d -> d.getId().equals(id));
+    }
+
+    public synchronized void updateDrive(PlacementDrive updated) {
+        for (int i = 0; i < drives.size(); i++) {
+            if (drives.get(i).getId().equals(updated.getId())) {
+                drives.set(i, updated);
+                return;
+            }
+        }
+    }
+
     public List<PlacementDrive> getAllDrives() { return new ArrayList<>(drives); }
 
     /** Retrieves next drive to process from Queue (FIFO) */

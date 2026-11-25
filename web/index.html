@@ -3,278 +3,628 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PLACEMENT – Smart Campus Placement Management System</title>
+  <title>PlacementPro – Empowering Careers. Connecting Futures.</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    :root {
-      --primary: #1e3a5f;
-      --primary-light: #2563eb;
-      --primary-dark: #0f172a;
-      --accent: #4f46e5;
-      --accent-light: #6366f1;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --text-secondary: #64748b;
-      --border: #e2e8f0;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --radius: 8px;
-      --radius-lg: 12px;
-      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    /* Split-Screen Auth Page Specific Styles */
+    .auth-split-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100vw;
+      background-color: var(--navy-950);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Top Navigation */
-    .top-nav {
-      background: #1e3a5f; color: #fff; padding: 0.85rem 2rem; display: flex;
-      justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    /* Left Brand Showcase */
+    .auth-showcase-panel {
+      flex: 1.15;
+      background: radial-gradient(circle at 20% 20%, #1E1B4B 0%, #0F172A 50%, #090D16 100%);
+      position: relative;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: var(--white);
+      overflow: hidden;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .brand { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 1.25rem; letter-spacing: 0.5px; }
-    .brand i { width: 28px; height: 28px; color: #60a5fa; }
-    .nav-tag { background: rgba(255,255,255,0.15); font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
 
-    /* Main Container */
-    .container { max-width: 1080px; margin: 2rem auto; padding: 0 1.5rem; width: 100%; flex: 1; }
+    .auth-showcase-panel::before {
+      content: '';
+      position: absolute;
+      top: -150px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.35) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
 
-    /* Demo Hint Banner */
-    .hint-banner {
-      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1.25rem;
-      margin-bottom: 2rem; box-shadow: var(--shadow);
+    .auth-showcase-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      right: -100px;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
     }
-    .hint-title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem; font-size: 0.95rem; }
-    .hint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.85rem; }
-    .hint-card {
-      background: #ffffff; border: 1px solid #dbeafe; border-radius: var(--radius); padding: 0.75rem 1rem;
-      display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;
-    }
-    .hint-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(59,130,246,0.1); }
-    .hint-role { font-weight: 600; font-size: 0.9rem; color: #1e3a5f; }
-    .hint-cred { font-size: 0.8rem; color: #64748b; font-family: monospace; margin-top: 2px; }
-    .btn-fill {
-      background: #3b82f6; color: #fff; border: none; padding: 0.4rem 0.75rem; border-radius: 6px;
-      font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: background 0.15s;
-    }
-    .btn-fill:hover { background: #1d4ed8; }
 
-    /* Auth Box */
-    .auth-wrapper {
-      max-width: 480px; margin: 0 auto; background: var(--card); border-radius: var(--radius-lg);
-      border: 1px solid var(--border); box-shadow: var(--shadow-lg); overflow: hidden;
+    .brand-hero-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
-    .auth-tabs { display: flex; border-bottom: 1px solid var(--border); background: #f8fafc; }
-    .tab-btn {
-      flex: 1; padding: 1rem; text-align: center; border: none; background: transparent; font-weight: 600;
-      color: var(--text-secondary); cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+
+    .brand-hero-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--indigo-500) 0%, var(--blue-500) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.45);
     }
-    .tab-btn.active { background: #ffffff; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
-    .auth-form { padding: 2rem; display: none; }
-    .auth-form.active { display: block; }
-
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem; }
-    .form-control {
-      width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: var(--radius);
-      font-size: 0.95rem; outline: none; transition: border-color 0.15s;
+    .brand-hero-logo i {
+      width: 26px;
+      height: 26px;
+      color: var(--white);
     }
-    .form-control:focus { border-color: var(--accent); ring: 2px solid #c7d2fe; }
 
-    .btn-submit {
-      width: 100%; background: #1e3a5f; color: #fff; padding: 0.85rem; border: none; border-radius: var(--radius);
-      font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+    .brand-hero-titles h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1.1;
     }
-    .btn-submit:hover { background: #0f172a; }
 
-    .toast {
-      position: fixed; bottom: 2rem; right: 2rem; padding: 0.85rem 1.25rem; border-radius: 8px;
-      color: #fff; font-weight: 500; font-size: 0.9rem; z-index: 1000; box-shadow: var(--shadow-lg);
-      transition: opacity 0.3s;
+    .brand-hero-titles p {
+      font-size: 0.8rem;
+      color: var(--indigo-400);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
-    .toast-success { background: #10b981; }
-    .toast-error { background: #ef4444; }
 
-    footer { text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+    .showcase-center-content {
+      position: relative;
+      z-index: 10;
+      max-width: 520px;
+      margin: 3rem 0;
+    }
+
+    .showcase-center-content h1 {
+      font-size: 2.85rem;
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.035em;
+      color: var(--white);
+      margin-bottom: 1.25rem;
+    }
+
+    .showcase-center-content h1 span {
+      background: linear-gradient(135deg, #818CF8 0%, #60A5FA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .showcase-center-content p {
+      font-size: 1.05rem;
+      color: var(--slate-300);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .feature-highlights-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .feature-highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.95rem;
+      color: var(--slate-200);
+    }
+
+    .feature-icon-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--indigo-400);
+      flex-shrink: 0;
+    }
+
+    .showcase-bottom-proof {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .proof-stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .proof-stat-num {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .proof-stat-label {
+      font-size: 0.75rem;
+      color: var(--slate-400);
+      font-weight: 500;
+    }
+
+    /* Right Auth Form Panel */
+    .auth-form-panel {
+      flex: 1;
+      background-color: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .auth-container-card {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .auth-card-header h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+    }
+
+    .auth-card-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Quick Demo Credentials Bar */
+    .demo-creds-bar {
+      background: #F8FAFD;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .demo-creds-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--indigo-600);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .demo-pill-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .demo-pill-btn {
+      background: var(--white);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: left;
+    }
+
+    .demo-pill-btn:hover {
+      border-color: var(--indigo-400);
+      background: var(--indigo-50);
+      color: var(--indigo-700);
+      transform: translateY(-1px);
+    }
+
+    .demo-pill-btn span {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-family: var(--font-mono);
+      margin-top: 0.1rem;
+    }
+
+    /* Segmented Tabs */
+    .segmented-auth-tabs {
+      display: flex;
+      background-color: var(--slate-100);
+      border-radius: var(--radius-md);
+      padding: 0.25rem;
+      border: 1px solid var(--border-default);
+    }
+
+    .seg-tab-btn {
+      flex: 1;
+      padding: 0.55rem 0;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .seg-tab-btn.active {
+      background-color: var(--white);
+      color: var(--indigo-600);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Input Icon Groups */
+    .input-icon-group {
+      position: relative;
+    }
+
+    .input-icon-group input,
+    .input-icon-group select {
+      padding-left: 2.35rem;
+    }
+
+    .input-icon-group i.field-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 17px;
+      height: 17px;
+      color: var(--text-light);
+      pointer-events: none;
+    }
+
+    .btn-block-primary {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--indigo-600) 0%, var(--indigo-700) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-block-primary:hover {
+      background: linear-gradient(135deg, var(--indigo-700) 0%, var(--indigo-800) 100%);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .auth-split-layout {
+        flex-direction: column;
+      }
+      .auth-showcase-panel {
+        display: none;
+      }
+      .auth-form-panel {
+        padding: 2.5rem 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <header class="top-nav">
-    <div class="brand">
-      <i data-lucide="graduation-cap"></i>
-      <span>PLACEMENT</span>
-      <span class="nav-tag">Smart Campus Portal</span>
-    </div>
-    <div style="font-size:0.85rem;color:#cbd5e1">
-      Terminal &amp; Web Sync Engine
-    </div>
-  </header>
-
-  <main class="container">
-
-    <!-- 1-Click Fill Demo Credentials Hint Box -->
-    <div class="hint-banner">
-      <div class="hint-title">
-        <i data-lucide="sparkles" style="width:18px;height:18px"></i>
-        <span>Quick Demo Credentials &amp; 1-Click Fill Hints (From Terminal Database)</span>
-      </div>
-      <div class="hint-grid">
-        <div class="hint-card">
-          <div>
-            <div class="hint-role">TPO / Admin Dashboard</div>
-            <div class="hint-cred">User: <b>admin</b> | Pass: <b>admin123</b></div>
-          </div>
-          <button class="btn-fill" onclick="fillCreds('admin', 'admin123', 'ADMIN')">1-Click Fill</button>
+  <div class="auth-split-layout">
+    <!-- Left Showcase Panel -->
+    <section class="auth-showcase-panel">
+      <!-- Header -->
+      <div class="brand-hero-header">
+        <div class="brand-hero-logo">
+          <i data-lucide="graduation-cap"></i>
         </div>
-
-        <div class="hint-card">
-          <div>
-            <div class="hint-role">Student 1 (Rahul Sharma - Placed)</div>
-            <div class="hint-cred">User: <b>student1</b> | Pass: <b>pass123</b></div>
-          </div>
-          <button class="btn-fill" onclick="fillCreds('student1', 'pass123', 'STUDENT')">1-Click Fill</button>
-        </div>
-
-        <div class="hint-card">
-          <div>
-            <div class="hint-role">Student 2 (Priya Patel - Eligible)</div>
-            <div class="hint-cred">User: <b>student2</b> | Pass: <b>pass123</b></div>
-          </div>
-          <button class="btn-fill" onclick="fillCreds('student2', 'pass123', 'STUDENT')">1-Click Fill</button>
-        </div>
-
-        <div class="hint-card">
-          <div>
-            <div class="hint-role">Recruiter (TechCorp Solutions)</div>
-            <div class="hint-cred">User: <b>recruiter1</b> | Pass: <b>pass123</b></div>
-          </div>
-          <button class="btn-fill" onclick="fillCreds('recruiter1', 'pass123', 'RECRUITER')">1-Click Fill</button>
+        <div class="brand-hero-titles">
+          <h2>PlacementPro</h2>
+          <p>Campus Recruitment Platform</p>
         </div>
       </div>
-    </div>
 
-    <!-- Auth Box -->
-    <div class="auth-wrapper">
-      <div class="auth-tabs">
-        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
-        <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">New Student Register</button>
+      <!-- Main Showcase Text -->
+      <div class="showcase-center-content">
+        <h1>Empowering Careers.<br><span>Connecting Futures.</span></h1>
+        <p>A unified enterprise placement ecosystem bridging university talent, placement officers, and elite corporate recruiters with precision matching.</p>
+
+        <div class="feature-highlights-list">
+          <div class="feature-highlight-item">
+            <div class="feature-icon-badge"><i data-lucide="check-circle-2"></i></div>
+            <span><b>Automated Eligibility Rules:</b> Real-time verification on CGPA, branches &amp; backlogs</span>
+          </div>
+          <div class="feature-highlight-item">
+            <div class="feature-icon-badge"><i data-lucide="calendar"></i></div>
+            <span><b>Conflict-Free Scheduling:</b> Instant collision detection across interview slots</span>
+          </div>
+          <div class="feature-highlight-item">
+            <div class="feature-icon-badge"><i data-lucide="bar-chart-2"></i></div>
+            <span><b>Executive Analytics:</b> Median, average and top package intelligence</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Login Form -->
-      <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label>Select Role</label>
-          <select id="loginRole" class="form-control">
-            <option value="STUDENT">Student</option>
-            <option value="ADMIN">TPO / Admin</option>
-            <option value="RECRUITER">Company Recruiter</option>
-          </select>
+      <!-- Bottom Proof Metrics -->
+      <div class="showcase-bottom-proof">
+        <div class="proof-stat-item">
+          <span class="proof-stat-num">96.8%</span>
+          <span class="proof-stat-label">Placement Rate</span>
         </div>
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="loginUsername" class="form-control" placeholder="e.g. admin or student1" required>
+        <div class="proof-stat-item">
+          <span class="proof-stat-num">140+</span>
+          <span class="proof-stat-label">Hiring Partners</span>
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+        <div class="proof-stat-item">
+          <span class="proof-stat-num">₹45 LPA</span>
+          <span class="proof-stat-label">Top Package</span>
         </div>
-        <button type="submit" class="btn-submit">Sign In to Dashboard</button>
-      </form>
+      </div>
+    </section>
 
-      <!-- Register Form -->
-      <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="regName" class="form-control" placeholder="e.g. Aryan Verma" required>
+    <!-- Right Authentication Form Panel -->
+    <main class="auth-form-panel">
+      <div class="auth-container-card">
+
+        <div class="auth-card-header">
+          <h2 id="authHeading">Welcome back</h2>
+          <p id="authSubheading">Enter your credentials to access your dashboard</p>
         </div>
-        <div class="form-group">
-          <label>Desired Username</label>
-          <input type="text" id="regUsername" class="form-control" placeholder="e.g. aryan25" required>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="regPassword" class="form-control" placeholder="Password" required>
-        </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="regEmail" class="form-control" placeholder="aryan@campus.edu" required>
-        </div>
-        <div class="form-group">
-          <label>Roll Number</label>
-          <input type="text" id="regRoll" class="form-control" placeholder="e.g. CS2025099" required>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-          <div class="form-group">
-            <label>Branch</label>
-            <select id="regBranch" class="form-control">
-              <option value="CSE">CSE</option>
-              <option value="ECE">ECE</option>
-              <option value="IT">IT</option>
-              <option value="ME">ME</option>
-              <option value="CE">CE</option>
-              <option value="EE">EE</option>
-            </select>
+
+        <!-- 1-Click Demo Credentials Pill Bar -->
+        <div class="demo-creds-bar">
+          <div class="demo-creds-title">
+            <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
+            <span>1-Click Demo Credentials</span>
           </div>
-          <div class="form-group">
-            <label>Current CGPA</label>
-            <input type="number" step="0.01" min="0" max="10" id="regCgpa" class="form-control" placeholder="8.50" required>
+          <div class="demo-pill-grid">
+            <button type="button" class="demo-pill-btn" onclick="fillDemo('admin', 'admin123', 'ADMIN')">
+              <strong>Admin / TPO</strong>
+              <span>admin &bull; admin123</span>
+            </button>
+            <button type="button" class="demo-pill-btn" onclick="fillDemo('student1', 'pass123', 'STUDENT')">
+              <strong>Student (Rahul)</strong>
+              <span>student1 &bull; pass123</span>
+            </button>
+            <button type="button" class="demo-pill-btn" onclick="fillDemo('student2', 'pass123', 'STUDENT')">
+              <strong>Student (Priya)</strong>
+              <span>student2 &bull; pass123</span>
+            </button>
+            <button type="button" class="demo-pill-btn" onclick="fillDemo('recruiter1', 'pass123', 'RECRUITER')">
+              <strong>TechCorp Recruiter</strong>
+              <span>recruiter1 &bull; pass123</span>
+            </button>
           </div>
         </div>
-        <button type="submit" class="btn-submit" style="background:#4f46e5">Complete Registration</button>
-      </form>
-    </div>
 
-  </main>
+        <!-- Segmented Tab: Sign In vs Register -->
+        <div class="segmented-auth-tabs">
+          <button type="button" class="seg-tab-btn active" id="tabBtnSignIn" onclick="switchAuthMode('login')">Sign In</button>
+          <button type="button" class="seg-tab-btn" id="tabBtnRegister" onclick="switchAuthMode('register')">Register Candidate</button>
+        </div>
 
-  <footer>
-    PLACEMENT Management System &bull; Java Backend + REST API + Modern Web + Terminal Engine &bull; Port 8080
-  </footer>
+        <!-- Login Form -->
+        <form id="signInForm" onsubmit="handleSignInSubmit(event)">
+          <div class="form-group" style="margin-bottom:1.1rem;">
+            <label class="form-label">Role</label>
+            <div class="input-icon-group">
+              <i data-lucide="shield" class="field-icon"></i>
+              <select id="loginRole" class="form-select">
+                <option value="STUDENT">Student Candidate</option>
+                <option value="ADMIN">Placement Officer / Admin</option>
+                <option value="RECRUITER">Company Recruiter</option>
+              </select>
+            </div>
+          </div>
 
-  <div id="toastContainer"></div>
+          <div class="form-group" style="margin-bottom:1.1rem;">
+            <label class="form-label">Username</label>
+            <div class="input-icon-group">
+              <i data-lucide="user" class="field-icon"></i>
+              <input type="text" id="loginUsername" class="form-input" placeholder="e.g. admin or student1" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <label class="form-label">Password</label>
+              <a href="#" onclick="alert('Demo accounts:\nAdmin: admin / admin123\nStudent: student1 / pass123\nRecruiter: recruiter1 / pass123')" style="font-size:0.78rem;font-weight:600;color:var(--indigo-600);">Need help?</a>
+            </div>
+            <div class="input-icon-group">
+              <i data-lucide="lock" class="field-icon"></i>
+              <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+            <label style="display:flex;align-items:center;gap:0.45rem;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">
+              <input type="checkbox" checked style="accent-color:var(--indigo-600);width:15px;height:15px;">
+              <span>Remember this session</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-block-primary" id="loginSubmitBtn">
+            <span>Sign In to PlacementPro</span>
+            <i data-lucide="arrow-right" style="width:17px;height:17px;"></i>
+          </button>
+        </form>
+
+        <!-- Register Form (Hidden by default) -->
+        <form id="registerCandidateForm" onsubmit="handleRegisterSubmit(event)" style="display:none;">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Full Name</label>
+            <div class="input-icon-group">
+              <i data-lucide="user" class="field-icon"></i>
+              <input type="text" id="regFullName" class="form-input" placeholder="e.g. Aryan Sharma" required>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input type="text" id="regUsername" class="form-input" placeholder="aryan25" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Roll Number</label>
+              <input type="text" id="regRollNo" class="form-input" placeholder="CS2025088" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">Campus Email</label>
+            <div class="input-icon-group">
+              <i data-lucide="mail" class="field-icon"></i>
+              <input type="email" id="regEmail" class="form-input" placeholder="aryan@university.edu" required>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+            <div class="form-group">
+              <label class="form-label">Branch</label>
+              <select id="regBranch" class="form-select">
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="IT">IT</option>
+                <option value="ME">ME</option>
+                <option value="CE">CE</option>
+                <option value="EE">EE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" id="regCgpa" class="form-input" placeholder="8.50" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.25rem;">
+            <label class="form-label">Password</label>
+            <div class="input-icon-group">
+              <i data-lucide="lock" class="field-icon"></i>
+              <input type="password" id="regPassword" class="form-input" placeholder="Create strong password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-block-primary">
+            <span>Register Candidate Account</span>
+            <i data-lucide="user-check" style="width:17px;height:17px;"></i>
+          </button>
+        </form>
+
+        <div style="text-align:center;font-size:0.8rem;color:var(--text-light);margin-top:0.5rem;">
+          Secure Academic Authentication &bull; Powered by PlacementPro Java REST Core
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
 
   <script>
     lucide.createIcons();
 
-    function fillCreds(u, p, r) {
-      switchTab('login');
-      document.getElementById('loginUsername').value = u;
-      document.getElementById('loginPassword').value = p;
-      document.getElementById('loginRole').value = r;
-      showToast('Filled credentials for ' + r + ' (' + u + ')', 'success');
+    function fillDemo(username, password, role) {
+      switchAuthMode('login');
+      document.getElementById('loginUsername').value = username;
+      document.getElementById('loginPassword').value = password;
+      document.getElementById('loginRole').value = role;
+      showToast(`Selected ${role} credentials for: ${username}`, 'info');
     }
 
-    function switchTab(tab) {
-      if (tab === 'login') {
-        document.getElementById('tabLogin').classList.add('active');
-        document.getElementById('tabRegister').classList.remove('active');
-        document.getElementById('loginForm').classList.add('active');
-        document.getElementById('registerForm').classList.remove('active');
+    function switchAuthMode(mode) {
+      const tabSignIn = document.getElementById('tabBtnSignIn');
+      const tabRegister = document.getElementById('tabBtnRegister');
+      const signInForm = document.getElementById('signInForm');
+      const regForm = document.getElementById('registerCandidateForm');
+      const heading = document.getElementById('authHeading');
+      const subheading = document.getElementById('authSubheading');
+
+      if (mode === 'login') {
+        tabSignIn.classList.add('active');
+        tabRegister.classList.remove('active');
+        signInForm.style.display = 'block';
+        regForm.style.display = 'none';
+        heading.innerText = 'Welcome back';
+        subheading.innerText = 'Enter your credentials to access your dashboard';
       } else {
-        document.getElementById('tabRegister').classList.add('active');
-        document.getElementById('tabLogin').classList.remove('active');
-        document.getElementById('registerForm').classList.add('active');
-        document.getElementById('loginForm').classList.remove('active');
+        tabRegister.classList.add('active');
+        tabSignIn.classList.remove('active');
+        signInForm.style.display = 'none';
+        regForm.style.display = 'block';
+        heading.innerText = 'Register Candidate';
+        subheading.innerText = 'Enroll as an eligible candidate in the placement cycle';
       }
     }
 
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
-      const t = document.createElement('div');
-      t.className = `toast toast-${type}`;
-      t.innerText = msg;
-      container.appendChild(t);
-      setTimeout(() => t.remove(), 3500);
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<i data-lucide="info" style="width:18px;height:18px;"></i> <span>${msg}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => toast.remove(), 4000);
     }
 
-    async function handleLogin(e) {
+    async function handleSignInSubmit(e) {
       e.preventDefault();
       const username = document.getElementById('loginUsername').value.trim();
       const password = document.getElementById('loginPassword').value;
       const role = document.getElementById('loginRole').value;
+      const btn = document.getElementById('loginSubmitBtn');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Signing in...</span>`;
 
       try {
         const res = await fetch('/api/auth/login', {
@@ -285,41 +635,47 @@
         const data = await res.json();
         if (res.ok && data.success) {
           sessionStorage.setItem('placement_user', JSON.stringify(data));
-          showToast('Login successful! Welcome ' + data.name, 'success');
-          setTimeout(() => { window.location.href = 'dashboard.html'; }, 400);
+          showToast(`Welcome back, ${data.name || username}! Redirecting...`, 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 500);
         } else {
-          showToast(data.error || 'Invalid credentials.', 'error');
+          showToast(data.error || 'Invalid credentials entered.', 'error');
         }
       } catch (err) {
-        showToast('Error connecting to backend server on port 8080.', 'error');
+        showToast('Connection failed: Ensure backend is running on port 8080.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Sign In to PlacementPro</span> <i data-lucide="arrow-right" style="width:17px;height:17px;"></i>`;
+        lucide.createIcons();
       }
     }
 
-    async function handleRegister(e) {
+    async function handleRegisterSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById('regName').value.trim();
+      const name = document.getElementById('regFullName').value.trim();
       const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
+      const rollNumber = document.getElementById('regRollNo').value.trim();
       const email = document.getElementById('regEmail').value.trim();
-      const rollNumber = document.getElementById('regRoll').value.trim();
       const branch = document.getElementById('regBranch').value;
       const cgpa = document.getElementById('regCgpa').value;
+      const password = document.getElementById('regPassword').value;
 
       try {
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, username, password, email, rollNumber, branch, cgpa, graduationYear: 2025 })
+          body: JSON.stringify({ name, username, rollNumber, email, branch, cgpa, password, graduationYear: 2025 })
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast('Registration successful! You can now sign in.', 'success');
-          fillCreds(username, password, 'STUDENT');
+          showToast('Registration successful! Signing you in...', 'success');
+          fillDemo(username, password, 'STUDENT');
         } else {
-          showToast(data.error || 'Registration failed.', 'error');
+          showToast(data.error || 'Failed to register account.', 'error');
         }
       } catch (err) {
-        showToast('Error registering with backend.', 'error');
+        showToast('Connection error connecting to Java backend.', 'error');
       }
     }
   </script>
