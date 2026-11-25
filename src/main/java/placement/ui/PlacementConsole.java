@@ -168,14 +168,14 @@ public class PlacementConsole {
             recruiterManager.addRecruiter(r1);
         }
 
-        notificationManager.addNotification("ALL", "Welcome to PLACEMENT Campus Management System!");
+        notificationManager.addNotification("ALL", "Welcome to PlaceMate Campus Management System!");
         notificationManager.addNotification("STU001", "New drive announced: TechCorp Graduate Engineer 2025");
         saveData();
     }
 
     public void run() {
         System.out.println("=======================================================");
-        System.out.println(" Welcome to PLACEMENT - Smart Campus Management System ");
+        System.out.println(" Welcome to PlaceMate - Smart Campus Management System ");
         System.out.println("=======================================================");
 
         boolean running = true;
@@ -189,7 +189,7 @@ public class PlacementConsole {
                 case 4: handleRecruiterLogin(); break;
                 case 5:
                     saveData();
-                    System.out.println("\nThank you for using PLACEMENT. Goodbye!");
+                    System.out.println("\nThank you for using PlaceMate. Goodbye!");
                     running = false;
                     break;
                 default: break;

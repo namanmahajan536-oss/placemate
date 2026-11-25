@@ -56,28 +56,10 @@ public final class HttpApiServer {
 
     public HttpApiServer(int port) throws IOException {
         this.port = port;
-        Path candidateWeb = Paths.get("web").toAbsolutePath().normalize();
-        if (!Files.exists(candidateWeb)) {
-            Path alt1 = Paths.get("PLACEMENT", "web").toAbsolutePath().normalize();
-            if (Files.exists(alt1)) candidateWeb = alt1;
-            else {
-                Path alt2 = Paths.get("..", "PLACEMENT", "web").toAbsolutePath().normalize();
-                if (Files.exists(alt2)) candidateWeb = alt2;
-            }
-        }
-        this.webRoot = candidateWeb;
+        this.webRoot = Paths.get("web").toAbsolutePath().normalize();
 
         this.dataManager = DataManager.getInstance();
-        Path candidateData = Paths.get("data").toAbsolutePath().normalize();
-        if (!Files.exists(candidateData)) {
-            Path alt1 = Paths.get("PLACEMENT", "data").toAbsolutePath().normalize();
-            if (Files.exists(alt1)) candidateData = alt1;
-            else {
-                Path alt2 = Paths.get("..", "PLACEMENT", "data").toAbsolutePath().normalize();
-                if (Files.exists(alt2)) candidateData = alt2;
-            }
-        }
-        this.dataManager.setDataDir(candidateData.toString());
+        this.dataManager.setDataDir("data");
 
         this.studentManager = new StudentManager();
         this.studentService = new StudentService(studentManager);
@@ -192,7 +174,7 @@ public final class HttpApiServer {
             recruiterManager.addRecruiter(r1);
         }
 
-        notificationManager.addNotification("ALL", "Welcome to PLACEMENT Campus Placement Portal!");
+        notificationManager.addNotification("ALL", "Welcome to PlaceMate Campus Placement Portal!");
         notificationManager.addNotification("STU001", "Campus Drive announced by TechCorp Solutions!");
         persistAll();
     }
@@ -226,7 +208,7 @@ public final class HttpApiServer {
     public void start() {
         server.start();
         System.out.println("=============================================================");
-        System.out.println(" PLACEMENT Web Server running at: http://localhost:" + port);
+        System.out.println(" PlaceMate Web Server running at: http://localhost:" + port);
         System.out.println(" Serving UI from: " + webRoot);
         System.out.println(" Dashboard Web UI: http://localhost:" + port + "/");
         System.out.println(" REST API Health : http://localhost:" + port + "/api/status");
@@ -235,7 +217,7 @@ public final class HttpApiServer {
 
     public void stop() {
         server.stop(0);
-        System.out.println("PLACEMENT Web Server stopped.");
+        System.out.println("PlaceMate Web Server stopped.");
     }
 
     public static void main(String[] args) {
@@ -268,7 +250,7 @@ public final class HttpApiServer {
             if (handleCors(exchange)) return;
             Map<String, Object> data = new LinkedHashMap<>();
             data.put("status", "ok");
-            data.put("app", "PLACEMENT - Smart Campus Placement Management System");
+            data.put("app", "PlaceMate - Smart Campus Placement Management System");
             data.put("version", "1.0.0");
             data.put("studentsCount", studentManager.getStudentCount());
             data.put("drivesCount", driveManager.getDriveCount());

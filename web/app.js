@@ -1,5 +1,5 @@
 /**
- * PlacementPro – Commercial SaaS Frontend Engine
+ * PlaceMate – Commercial SaaS Frontend Engine
  * Complete integration with Java REST API server
  */
 
